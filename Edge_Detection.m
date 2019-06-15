@@ -22,7 +22,7 @@ function varargout = Edge_Detection(varargin)
 
 % Edit the above text to modify the response to help Edge_Detection
 
-% Last Modified by GUIDE v2.5 15-Jun-2019 12:25:47
+% Last Modified by GUIDE v2.5 15-Jun-2019 14:14:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -117,6 +117,10 @@ function detect_edge_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if isempty(handles.imbw)
     msgbox('Load an image first!','No Image','Error');
+    return
+end
+if isequal(handles.method,'compass') || isequal(handles.method,'kirsch') || isequal(handles.method,'cendif') || isequal(handles.method,'isotropic')
+    msgbox('Sorry, this method is not supported yet.','Unsupported method','Error');
     return
 end
 handles.imedge=edge(double(handles.imbw),handles.method);
