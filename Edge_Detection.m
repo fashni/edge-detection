@@ -56,6 +56,9 @@ function Edge_Detection_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % Update handles structure
+handles.im=[];
+handles.imbw=[];
+handles.imedge=[];
 handles.method='roberts';
 guidata(hObject, handles);
 
