@@ -106,23 +106,25 @@ function detect_edge_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global im
-if ~isempty(im)
-    im2=double(im);
-    if get(handles.roberts,'Value')
-        handles.imedge=edge(im2,'roberts');
-    else if get(handles.prewitt,'Value')
-            handles.imedge=edge(im2,'prewitt');
-        else if get(handles.sobel,'Value')
-                handles.imedge=edge(im2,'sobel');
-            else if get(handles.canny,'Value')
-                    handles.imedge=edge(im2,'canny');
-                else
-                    handles.imedge=[];
-                end
+if isempty(im)
+    msgbox('Load an image first!','No Image','Error');
+    return
+end
+im2=double(im);
+if get(handles.roberts,'Value')
+    handles.imedge=edge(im2,'roberts');
+else if get(handles.prewitt,'Value')
+        handles.imedge=edge(im2,'prewitt');
+    else if get(handles.sobel,'Value')
+            handles.imedge=edge(im2,'sobel');
+        else if get(handles.canny,'Value')
+                handles.imedge=edge(im2,'canny');
+            else
+                handles.imedge=[];
             end
         end
     end
-    guidata(hObject,handles);
-    axes(handles.edge);
-    imshow(handles.imedge);
 end
+guidata(hObject,handles);
+axes(handles.edge);
+imshow(handles.imedge);
