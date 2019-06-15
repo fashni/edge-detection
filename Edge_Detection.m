@@ -22,7 +22,7 @@ function varargout = Edge_Detection(varargin)
 
 % Edit the above text to modify the response to help Edge_Detection
 
-% Last Modified by GUIDE v2.5 15-Jun-2019 11:02:35
+% Last Modified by GUIDE v2.5 15-Jun-2019 12:25:47
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -78,10 +78,8 @@ function load_image_Callback(hObject, eventdata, handles)
 % hObject    handle to load_image (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global im
 [FileName,PathName]=uigetfile('*.tif','Select an Image File');
-im=imread([PathName,FileName]);
-handles.im=im;
+handles.im=imread([PathName,FileName]);
 guidata(hObject,handles);
 axes(handles.original);
 imshow(handles.im);
@@ -92,12 +90,12 @@ function reset_Callback(hObject, eventdata, handles)
 % hObject    handle to reset (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global im
-im=[];
 handles.im=[];
 handles.imedge=[];
+handles.method=[];
 cla(handles.original);
 cla(handles.edge);
+guidata(hObject,handles)
 
 
 % --- Executes on button press in detect_edge.
@@ -105,26 +103,20 @@ function detect_edge_Callback(hObject, eventdata, handles)
 % hObject    handle to detect_edge (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global im
-if isempty(im)
+if isempty(handles.im)
     msgbox('Load an image first!','No Image','Error');
     return
 end
-im2=double(im);
-if get(handles.roberts,'Value')
-    handles.imedge=edge(im2,'roberts');
-else if get(handles.prewitt,'Value')
-        handles.imedge=edge(im2,'prewitt');
-    else if get(handles.sobel,'Value')
-            handles.imedge=edge(im2,'sobel');
-        else if get(handles.canny,'Value')
-                handles.imedge=edge(im2,'canny');
-            else
-                handles.imedge=[];
-            end
-        end
-    end
-end
+handles.imedge=edge(double(handles.im),handles.method);
 guidata(hObject,handles);
 axes(handles.edge);
 imshow(handles.imedge);
+
+
+% --- Executes when selected object is changed in det_method.
+function det_method_SelectionChangedFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in det_method 
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.method = get(eventdata.NewValue,'Tag');
+guidata(hObject,handles);
