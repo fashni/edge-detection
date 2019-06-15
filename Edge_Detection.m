@@ -56,6 +56,7 @@ function Edge_Detection_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % Update handles structure
+handles.method='roberts';
 guidata(hObject, handles);
 
 % UIWAIT makes Edge_Detection wait for user response (see UIRESUME)
@@ -79,7 +80,15 @@ function load_image_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [FileName,PathName]=uigetfile('*.tif','Select an Image File');
+if [FileName,PathName]==0
+    return
+end
 handles.im=imread([PathName,FileName]);
+if size(handles.im,3)==3
+    handles.imbw=rgb2gray(handles.im);
+else
+    handles.imbw=handles.im;
+end
 guidata(hObject,handles);
 axes(handles.original);
 imshow(handles.im);
@@ -91,8 +100,8 @@ function reset_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.im=[];
+handles.imbw=[];
 handles.imedge=[];
-handles.method=[];
 cla(handles.original);
 cla(handles.edge);
 guidata(hObject,handles)
@@ -103,11 +112,11 @@ function detect_edge_Callback(hObject, eventdata, handles)
 % hObject    handle to detect_edge (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if isempty(handles.im)
+if isempty(handles.imbw)
     msgbox('Load an image first!','No Image','Error');
     return
 end
-handles.imedge=edge(double(handles.im),handles.method);
+handles.imedge=edge(double(handles.imbw),handles.method);
 guidata(hObject,handles);
 axes(handles.edge);
 imshow(handles.imedge);
