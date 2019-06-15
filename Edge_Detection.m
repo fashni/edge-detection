@@ -94,7 +94,7 @@ else
 end
 guidata(hObject,handles);
 axes(handles.original);
-imshow(handles.im);
+imagesc(handles.im),colormap gray;
 
 
 % --- Executes on button press in reset.
@@ -119,14 +119,57 @@ if isempty(handles.imbw)
     msgbox('Load an image first!','No Image','Error');
     return
 end
+handles.imbw=double(handles.imbw);
 if isequal(handles.method,'compass') || isequal(handles.method,'kirsch') || isequal(handles.method,'cendif') || isequal(handles.method,'isotropic')
-    msgbox('Sorry, this method is not supported yet.','Unsupported method','Error');
-    return
+    if isequal(handles.method,'cendif') || isequal(handles.method,'isotropic')
+        switch handles.method
+            case 'cendif'
+                d1=[-1,0,1];
+                d2=[-1;0;1];
+            case 'isotropic'
+                d1=[-1 0 1;-sqrt(2) 0 sqrt(2);-1 0 1];
+                d2=[-1 -sqrt(2) -1;0 0 0;1 sqrt(2) 1];
+        end
+        I1=conv2(handles.imbw,d1,'same');
+        I2=conv2(handles.imbw,d2,'same');
+        handles.imedge=sqrt((I1.^2)+(I2.^2));
+    else if isequal(handles.method,'compass')
+            d1=[1,1,1;1,-2,1;-1,-1,-1];
+            d2=[-1,-1,-1;1,-2,1;1,1,1];
+            d3=[-1,1,1;-1,-2,1;-1,1,1];
+            d4=[1,1,-1;1,-2,-1;1,1,-1];
+            I1=conv2(handles.imbw,d1,'same');
+            I2=conv2(handles.imbw,d2,'same');
+            I3=conv2(handles.imbw,d3,'same');
+            I4=conv2(handles.imbw,d4,'same');
+            handles.imedge=sqrt((I1.^2)+(I2.^2)+(I3.^2)+(I4.^2));
+        else if isequal(handles.method,'kirsch')
+                d1=[-3,-3,5;-3,0,5;-3,-3,5];
+                d2=[-3,5,5;-3,0,5;-3,-3,-3];
+                d3=[5,5,5;-3,0,-3;-3,-3,-3];
+                d4=[5,5,-3;5,0,-3;-3,-3,-3];
+                d5=[5,-3,-3;5,0,-3;5,-3,-3];
+                d6=[-3,-3,-3;5,0,-3;5,5,-3];
+                d7=[-3,-3,-3;-3,0,-3;5,5,5];
+                d8=[-3,-3,-3;-3,0,5;-3,5,5];
+                I1=conv2(handles.imbw,d1,'same');
+                I2=conv2(handles.imbw,d2,'same');
+                I3=conv2(handles.imbw,d3,'same');
+                I4=conv2(handles.imbw,d4,'same');
+                I5=conv2(handles.imbw,d5,'same');
+                I6=conv2(handles.imbw,d6,'same');
+                I7=conv2(handles.imbw,d7,'same');
+                I8=conv2(handles.imbw,d8,'same');
+                handles.imedge=sqrt((I1.^2)+(I2.^2)+(I3.^2)+(I4.^2)+(I5.^2)+(I6.^2)+(I7.^2)+(I8.^2));
+            end
+        end
+    end
+else
+    handles.imedge=edge(handles.imbw,handles.method);
 end
-handles.imedge=edge(double(handles.imbw),handles.method);
 guidata(hObject,handles);
 axes(handles.edge);
-imshow(handles.imedge);
+imagesc(handles.imedge),colormap gray;
 
 
 % --- Executes when selected object is changed in det_method.
