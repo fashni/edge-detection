@@ -114,8 +114,11 @@ if ~isempty(im)
             handles.imedge=edge(im2,'prewitt');
         else if get(handles.sobel,'Value')
                 handles.imedge=edge(im2,'sobel');
-            else
-                handles.imedge=[]
+            else if get(handles.canny,'Value')
+                    handles.imedge=edge(im2,'canny');
+                else
+                    handles.imedge=[];
+                end
             end
         end
     end
